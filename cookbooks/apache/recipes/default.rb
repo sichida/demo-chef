@@ -13,21 +13,24 @@ end
 
 puts(node[:apache][:conf_dir])
 
-template [node[:apache][:conf_dir],node[:apache][:site_availables],node[:apache][:default_conf]].join('/') do
+template [node[:apache][:conf_dir],node[:apache][:sites_available],node[:apache][:default_conf]].join('/') do
   source "default.conf.erb"
   variables(
     :home_dir => node[:apache][:home_dir]
   )
+  mode "0644"
   action :create
 end
 
-link [node[:apache][:conf_dir],node[:apache][:sites_available],node[:apache][:default_conf]].join('/') do
-  to [node[:apache][:conf_dir],node[:apache][:sites_enabled],node[:apache][:default_conf]].join('/')
-  only_if "test -L #{[node[:apache][:conf_dir],node[:apache][:site_enabled],node[:apache][:default_conf]].join('/')}"
+link [node[:apache][:conf_dir],node[:apache][:sites_enabled],node[:apache][:default_conf]].join('/') do
+  to [node[:apache][:conf_dir],node[:apache][:sites_available],node[:apache][:default_conf]].join('/')
+  only_if "test -f #{[node[:apache][:conf_dir],node[:apache][:sites_available],node[:apache][:default_conf]].join('/')}"
+  notifies :restart, "service[apache2]"
 end
 
 file [node[:apache][:conf_dir],node[:apache][:sites_enabled],'000-default.conf'].join('/') do
-     action :delete
+  action :delete
+  notifies :restart, "service[apache2]"
 end
 
 cookbook_file [node[:apache][:home_dir],node[:apache][:welcome_page]].join('/') do
