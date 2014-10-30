@@ -1,12 +1,13 @@
-upstream myapp1 {
-    server 192.168.56.102;
-    server 192.168.56.103;
+upstream all {
+    <% @nodes.each do |n| %>
+    server <%= n[:ip] %>; # <%= n[:name] %>
+    <% end %>
 }
 
 server {
     listen 80;
 
     location / {
-        proxy_pass http://myapp1;
+        proxy_pass http://all;
     }
 }
