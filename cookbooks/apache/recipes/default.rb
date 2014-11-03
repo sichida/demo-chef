@@ -43,7 +43,6 @@ service 'apache2' do
   action [ :enable, :start ]
 end
 
-
 template [node[:apache][:home_dir],'host.html'].join('/') do
   source "host.html.erb"
   variables(

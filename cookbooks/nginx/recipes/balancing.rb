@@ -21,6 +21,8 @@ partial_search(:node, 'role:front',
 	nodes.push({name: 'front-2', ip: '192.168.56.103'})
   end
   # nodes.push({name: result['name'], ip: result['ip']})
+  # or
+  # nodes.push(result)
 end
 
 template default_conf do
