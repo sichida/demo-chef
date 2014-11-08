@@ -1,13 +1,15 @@
-upstream all {
+upstream <%= @pool %> {
     <% @nodes.each do |n| %>
     server <%= n[:ip] %>; # <%= n[:name] %>
     <% end %>
 }
 
+
 server {
     listen 80;
 
-    location / {
-        proxy_pass http://all;
+    location <%= @location %> {
+    	rewrite ^(.*)$  /<%= @application %>/<%= @version %>/$1 break;
+        proxy_pass http://<%= @pool %>;
     }
 }
